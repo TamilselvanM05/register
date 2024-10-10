@@ -1,0 +1,111 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>User Login</title>
+    <script src="https://cdn.jsdelivr.net/npm/axios/dist/axios.min.js"></script>
+    <style>
+        body {
+            font-family: Arial, sans-serif;
+            display: flex;
+            justify-content: center;
+            align-items: center;
+            height: 100vh;
+            background-color: #f0f0f0;
+        }
+        form {
+            background: white;
+            padding: 40px;
+            border-radius: 5px;
+            box-shadow: 0 0 10px rgba(0,0,0,0.1);
+        }
+        input {
+            margin: 10px 0;
+            padding: 10px;
+            width: 100%;
+            border: 1px solid #ccc;
+            border-radius: 5px;
+        }
+        button {
+            padding: 10px;
+            width: 100%;
+            border: none;
+            background-color: #28a745;
+            color: white;
+            border-radius: 5px;
+            cursor: pointer;
+        }
+        button:hover {
+            background-color: #218838;
+        }
+        .error {
+            margin-top: 10px;
+            color: red;
+        }
+        .result {
+            margin-top: 10px;
+            color: green;
+        }
+    </style>
+</head>
+<body>
+    <form id="loginForm">
+        <h2>Login</h2>
+        <input type="email" id="email" placeholder="Enter your email" required>
+        <input type="password" id="password" placeholder="Enter your password" required>
+        <button type="submit">Login</button>
+        <div class="error" id="error" style="display: none;"></div>
+        <div class="result" id="result" style="display: none;"></div> <!-- Added result div -->
+    </form>
+
+    <script>
+        const form = document.getElementById('loginForm');
+        const errorDiv = document.getElementById('error');
+        const resultDiv = document.getElementById('result'); // Declare resultDiv
+
+        form.addEventListener('submit', async function(event) {
+            event.preventDefault(); // Prevent form submission
+
+            const email = document.getElementById('email').value;
+            const password = document.getElementById('password').value;
+
+            // Perform validation (e.g., check if email and password are non-empty)
+            if (email === '' || password === '') {
+                errorDiv.style.display = 'block';
+                errorDiv.textContent = 'Email and password are required';
+                resultDiv.style.display = 'none';
+                return;
+            }
+
+            try {
+                // Send login request to the server
+                const response = await axios.post('http://localhost:5500/api/auth/login', {
+                    email: email,
+                    password: password
+                });
+
+                const data = response;
+                console.log(data);
+                if(response.request.status == 200){
+                    localStorage.setItem("name",response.data.User.username);
+                    localStorage.setItem("email",response.data.User.email);
+                    localStorage.setItem("password",response.data.User.password);
+                    localStorage.setItem("phone",response.data.User.phone);
+                    localStorage.setItem("location",response.data.User.location);
+                    window.location.href = 'dashboard.html';
+                }
+                
+                // // Correct path here
+            } catch (error) {
+                // Display error message
+                errorDiv.style.display = 'block';
+                errorDiv.textContent = error.response ? error.response.data.error : error.message;
+                resultDiv.style.display = 'none';
+            }
+        });
+    </script>
+</body>
+</html>
+
+

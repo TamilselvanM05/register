@@ -1,0 +1,109 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>New User Registration</title>
+    <script src="https://cdn.jsdelivr.net/npm/axios/dist/axios.min.js"></script>
+    <style>
+        body {
+            font-family: Arial, sans-serif;
+            display: flex;  
+            justify-content: center;
+            align-items: center;
+            height: 100vh;
+            background-color: #f0f0f0;
+        }
+        form {
+            background: white;
+            padding: 40px;
+            border-radius: 5px;
+            box-shadow: 0 0 10px rgba(0,0,0,0.1);
+        }
+        input {
+            margin: 10px 0;
+            padding: 10px;
+            width: 100%;
+            border: 1px solid #ccc;
+            border-radius: 5px;
+        }
+        button {
+            padding: 10px;
+            width: 100%;
+            border: none;
+            background-color: #28a745;
+            color: white;
+            border-radius: 5px;
+            cursor: pointer;
+        }
+        button:hover {
+            background-color: #218838;
+        }
+        .result {
+            margin-top: 20px;
+            padding: 10px;
+            background: #e2e2e2;
+            border-radius: 5px;
+        }
+    </style>
+</head>
+<body>
+    <form id="ifscForm">
+        <h2>Registration Page</h2>
+        <input type="text" id="username" placeholder="Enter your username" required>
+        <input type="email" id="email" placeholder="Enter your email" required>
+        <input type="password" id="password" placeholder="Enter your password" required>
+        <input type="tel" id="phone" placeholder="Enter your phone number" required>
+        <input type="text" id="location" placeholder="Enter your location" required>
+        <button type="submit">Submit</button>
+    </form>
+    <div class="result" id="result" style="display: none;"></div>
+
+    <script>
+        const form = document.getElementById('ifscForm');
+        const resultDiv = document.getElementById('result');
+
+        form.addEventListener('submit', async function(event) {
+            event.preventDefault(); // Prevent the form from submitting
+
+            const username = document.getElementById('username').value;
+            const email = document.getElementById('email').value;
+            const password = document.getElementById('password').value;
+            const phone = document.getElementById('phone').value;
+            const location = document.getElementById('location').value;
+
+           
+
+            console.log('Username:', username);
+            console.log('Email:', email);
+            console.log('Password:', password);
+            console.log('Phone:', phone);
+            console.log('Location:', location);
+
+            try {
+                const response = await axios.post('http://localhost:5500/api/auth/register', {
+                    username: username,
+                    email: email,
+                    password: password,
+                    phone: phone,
+                    location: location
+                });
+
+                // Assuming the response data contains relevant information
+                const data = response.data.message;
+                console.log(data);
+                
+                resultDiv.style.display = 'block';
+                resultDiv.innerHTML = ` 
+                    <h4>Username: ${data}</h4>
+                  
+                `;
+                window.location.href = 'login.html';
+            } catch (error) {
+                resultDiv.style.display = 'block';
+                resultDiv.innerHTML = `<p>Error: ${error.response ? error.response.data.error : error.message}</p>`;
+            }
+        });
+    </script>
+</body>
+</html>
